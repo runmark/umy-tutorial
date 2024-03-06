@@ -3,6 +3,7 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "./db";
+import { redirect } from "next/dist/server/api-utils";
 
 export const deleteTask = async (formData) => {
     const id = formData.get("id");
@@ -27,4 +28,20 @@ export const getAllTasks = async () => {
             createdAt: "desc",
         }
     });
+}
+
+export const updateTask = async (formData) => {
+    const id = formData.get("id");
+    const content = formData.get("content");
+    const completed = formData.get("completed");
+
+    await prisma.task.update({
+        where: { id },
+        data: {
+            content,
+            completed: completed === "on" ? true : false,
+        }
+    });
+
+    redirect('/tasks');
 }
