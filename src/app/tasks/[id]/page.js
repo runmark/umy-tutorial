@@ -1,15 +1,20 @@
-import { updateTask } from "@/utils/actions";
+import EditForm from "@/components/EditForm";
+import { getSingleTask } from "@/utils/actions";
+import Link from "next/link";
 
-const TaskPage = () => {
+
+
+const TaskPage = async ({ params }) => {
+
+    const task = await getSingleTask(params.id);
+
     return (
-        <div>
-            <form action={updateTask}>
-                <input type="hidden" name="id" value={id} />
-                <input type="text" name="content" required></input>
-                <input type="radio" name="completed" required></input>
-                <button type="submit">EDIT</button>
-            </form>
-        </div>
+        <>
+            <div className="mb-16">
+                <Link href="/tasks" className="btn btn-accent">Back to Tasks</Link>
+            </div>
+            <EditForm task={task} />
+        </>
     );
 }
 

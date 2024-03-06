@@ -3,7 +3,7 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "./db";
-import { redirect } from "next/dist/server/api-utils";
+import { redirect } from "next/navigation";
 
 export const deleteTask = async (formData) => {
     const id = formData.get("id");
@@ -30,7 +30,15 @@ export const getAllTasks = async () => {
     });
 }
 
-export const updateTask = async (formData) => {
+export const getSingleTask = async (id) => {
+    return await prisma.task.findUnique({
+        where: {
+            id,
+        },
+    });
+};
+
+export const editTask = async (formData) => {
     const id = formData.get("id");
     const content = formData.get("content");
     const completed = formData.get("completed");
