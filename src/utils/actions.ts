@@ -2,13 +2,26 @@
 'use server';
 
 import { revalidatePath } from "next/cache";
-import prisma from "./db";
 import { redirect } from "next/navigation";
+import prisma from "./db";
 
-export const deleteTask = async (formData) => {
+import { z } from "zod";
+
+export const deleteTask = async (prevState, formData) => {
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     const id = formData.get("id");
-    await prisma.task.delete({ where: { id } });
-    revalidatePath("/tasks");
+
+    try {
+        await prisma.task.delete({ where: { id } });
+        revalidatePath("/tasks");
+
+        return { message: "success" };
+    } catch (err) {
+        return { message: "error" };
+    }
+
 }
 
 export const createTask = async (formData) => {
@@ -26,9 +39,14 @@ export const createTaskCustom = async (prevState, formData) => {
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
+    const Task = z.object({
+        content: z.string().min(5),
+    });
+
     const content = formData.get("content");
 
     try {
+        Task.parse({ content, });
 
         await prisma.task.create({
             data: {
@@ -43,7 +61,7 @@ export const createTaskCustom = async (prevState, formData) => {
         return { message: 'success!!!' };
 
     } catch (error) {
-        return { message: 'error...' };
+        return { message: 'error' };
     }
 }
 

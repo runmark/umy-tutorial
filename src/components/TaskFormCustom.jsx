@@ -1,7 +1,9 @@
 'use client';
 
 import { createTaskCustom } from "@/utils/actions";
+import { useEffect } from "react";
 import { useFormStatus, useFormState } from "react-dom";
+import toast from "react-hot-toast";
 
 const SubmitButton = () => {
     // useFormStatus 使用的位置很关键，
@@ -22,10 +24,22 @@ const TaskFormCustom = () => {
 
     const [state, createTaskCustomHandler] = useFormState(createTaskCustom, initialState);
 
+    useEffect(() => {
+        if (state.message === 'error') {
+            toast.error("there was an error");
+            return;
+        }
+
+        if (state.message === 'success') {
+            toast.success('task created...');
+            return;
+        }
+    }, [state]);
+
     return (
         <form action={createTaskCustomHandler}>
 
-            {state.message ? <p className="mb-2">{state.message}</p> : null}
+            {/* {state.message ? <p className="mb-2">{state.message}</p> : null} */}
 
             <div className="join w-full">
                 <input type="text" name="content" placeholder="Type Here" required

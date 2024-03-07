@@ -1,18 +1,46 @@
+'use client';
+
 import { deleteTask } from "@/utils/actions";
-import prisma from "@/utils/db";
+import { useEffect } from "react";
+import { useFormStatus, useFormState } from "react-dom";
+import toast from "react-hot-toast";
+
+const SubmitButton = () => {
+
+    const { pending } = useFormStatus();
+
+    return (
+        <button className="btn btn-error btn-xs" disabled={pending}>
+            {pending ? "deleting...." : "delete"}
+        </button>
+    );
+};
+
+const initialState = {
+    message: null,
+}
 
 const DeleteForm = ({ id }) => {
 
-    // prisma.task.delete({
-    //     where: {
-    //         id: id
-    //     }
-    // });
+    const [state, deleteTaskHandler] = useFormState(deleteTask, initialState);
+
+    useEffect(() => {
+        if (state.message === "success") {
+            toast.success("delete success!");
+            return;
+        }
+
+        if (state.message === "error") {
+            toast.error("error");
+            return;
+        }
+
+    }, [state]);
 
     return (
-        <form action={deleteTask}>
+        <form action={deleteTaskHandler}>
             <input type='hidden' name='id' value={id} />
-            <button className="btn btn-error btn-xs">delete</button>
+            <SubmitButton />
         </form>
     );
 }
